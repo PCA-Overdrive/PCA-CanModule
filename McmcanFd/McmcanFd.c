@@ -10,6 +10,8 @@
 IfxCan_Can       g_can;
 IfxCan_Can_Node  g_canNode;
 
+volatile uint32 g_dbg_rxMsgId   = 0U;
+volatile uint32 g_dbg_rxCount   = 0U;
 /* ================================================================
  * Message RAM 오프셋 (노드 0 기준)
  * ================================================================ */
@@ -90,7 +92,7 @@ void McmcanFd_Init(void)
 
     /* ── 인터럽트 설정 (노드 레벨) ── */
     nodeCfg.interruptConfig.rxFifo0NewMessageEnabled  = TRUE;
-    nodeCfg.interruptConfig.rxf0n.priority            = 10;
+    nodeCfg.interruptConfig.rxf0n.priority            = ISR_PRIORITY_CAN_RX;
     nodeCfg.interruptConfig.rxf0n.typeOfService       = IfxSrc_Tos_cpu0;
     nodeCfg.interruptConfig.rxf0n.interruptLine       = IfxCan_InterruptLine_0;
 
@@ -160,9 +162,9 @@ static void sendFrame(uint32 msgId,
     IfxCan_Message txMsg;
     IfxCan_Can_initMessage(&txMsg);
 
-    txMsg.messageId       = msgId;
-    txMsg.messageIdLength = IfxCan_MessageIdLength_standard;
-    txMsg.bufferNumber    = 0U;
+    txMsg.messageId          = msgId;
+    txMsg.messageIdLength    = IfxCan_MessageIdLength_standard;
+    txMsg.bufferNumber       = 0U;
     txMsg.storeInTxFifoQueue = FALSE;
 
     if (isFd) {
@@ -171,18 +173,23 @@ static void sendFrame(uint32 msgId,
         txMsg.frameMode = IfxCan_FrameMode_standard;
     }
 
-    /* DLC 설정 */
     if      (payloadBytes <= 8U)  txMsg.dataLengthCode = (IfxCan_DataLengthCode)payloadBytes;
     else if (payloadBytes <= 12U) txMsg.dataLengthCode = IfxCan_DataLengthCode_12;
     else if (payloadBytes <= 16U) txMsg.dataLengthCode = IfxCan_DataLengthCode_16;
     else if (payloadBytes <= 20U) txMsg.dataLengthCode = IfxCan_DataLengthCode_20;
     else                          txMsg.dataLengthCode = IfxCan_DataLengthCode_64;
 
-    /* payload → uint32 배열 복사 */
     uint32 txData[16] = {0};
     memcpy(txData, payload, payloadBytes);
 
-    while (IfxCan_Can_sendMessage(&g_canNode, &txMsg, txData) == IfxCan_Status_notSentBusy) {}
+    /* 성공할 때까지 재시도, 단 횟수 제한 */
+    uint32 retry = 0U;
+    IfxCan_Status status;
+
+    do {
+        status = IfxCan_Can_sendMessage(&g_canNode, &txMsg, txData);
+        retry++;
+    } while (status == IfxCan_Status_notSentBusy && retry < 1000U);
 }
 
 /* ================================================================
@@ -264,7 +271,7 @@ boolean McmcanFd_RecvVehicleControl(VehicleControlCmd_t *out)
 /* ================================================================
  * RX 인터럽트 핸들러
  * ================================================================ */
-IFX_INTERRUPT(McmcanFd_IsrRxHandler, 0, 10)
+IFX_INTERRUPT(McmcanFd_IsrRxHandler, 0, ISR_PRIORITY_CAN_RX)
 {
     IfxCan_Message rxMsg;
     IfxCan_Can_initMessage(&rxMsg);
@@ -273,6 +280,9 @@ IFX_INTERRUPT(McmcanFd_IsrRxHandler, 0, 10)
     uint32 rxData[16] = {0};
 
     IfxCan_Can_readMessage(&g_canNode, &rxMsg, rxData);
+
+    g_dbg_rxMsgId = rxMsg.messageId;   /* ← 추가 */
+    g_dbg_rxCount++;                    /* ← 추가 */
 
     switch (rxMsg.messageId)
     {
@@ -303,4 +313,7 @@ IFX_INTERRUPT(McmcanFd_IsrRxHandler, 0, 10)
         default:
             break;
     }
+
+    /* ── RX FIFO0 인터럽트 플래그 클리어 ── */
+    IfxCan_Node_clearInterruptFlag(g_canNode.node, IfxCan_Interrupt_rxFifo0NewMessage);
 }

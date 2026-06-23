@@ -4,11 +4,13 @@
 /* 빌드 시 하나만 활성화 */
 // #define NODE_SENSOR_ECU
 // #define NODE_JUDGMENT_ECU
-// #define NODE_MOTOR_ECU
+#define NODE_MOTOR_ECU
 
 /* 비트레이트 */
 #define MCMCAN_ARB_BAUDRATE       500000U
 #define MCMCAN_DATA_BAUDRATE     2000000U
+
+#define ISR_PRIORITY_CAN_RX  50U
 
 /* ── CAN ID ───────────────────────────────────────── */
 /* Sensor ECU → 판단 ECU (CAN FD, 17 bytes) */
