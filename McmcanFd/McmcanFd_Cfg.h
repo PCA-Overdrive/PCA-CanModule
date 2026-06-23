@@ -13,10 +13,10 @@
 #define ISR_PRIORITY_CAN_RX  50U
 
 /* ── CAN ID ───────────────────────────────────────── */
-/* Sensor ECU → 판단 ECU (CAN FD, 17 bytes) */
+/* Sensor ECU → 판단 ECU (CAN FD, 23 bytes) */  /* ← 17 → 23 */
 #define MSG_ID_ULTRASONIC         0x200U
 
-/* 판단 ECU → 라즈베리파이 (CAN FD, 9 bytes) */
+/* 판단 ECU → 라즈베리파이 (CAN FD, 14 bytes) */  /* ← 9 → 14 */
 #define MSG_ID_DISTANCE_LEVEL     0x400U
 
 /* 판단 ECU → 라즈베리파이 (Classical, 1 byte) */
@@ -28,7 +28,7 @@
 /* 라즈베리파이 → 판단 ECU (Classical, 4 bytes) */
 #define MSG_ID_VEHICLE_STATUS     0x201U
 
-/* 라즈베리파이 → 판단 ECU (Classical, 2 bytes) */
+/* 라즈베리파이 → 판단 ECU (Classical, 1 byte) */  /* ← 2 → 1 */
 #define MSG_ID_AUTO_PARKING       0x300U
 
 #endif
