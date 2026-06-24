@@ -10,9 +10,7 @@ RM := rm -rf
 -include sources.mk
 -include McmcanFd/subdir.mk
 -include Libraries/iLLD/TC3xx/Tricore/_PinMap/TC37x/subdir.mk
--include Libraries/iLLD/TC3xx/Tricore/_Lib/DataHandling/subdir.mk
 -include Libraries/iLLD/TC3xx/Tricore/_Impl/subdir.mk
--include Libraries/iLLD/TC3xx/Tricore/Stm/Std/subdir.mk
 -include Libraries/iLLD/TC3xx/Tricore/Src/Std/subdir.mk
 -include Libraries/iLLD/TC3xx/Tricore/Scu/Std/subdir.mk
 -include Libraries/iLLD/TC3xx/Tricore/Port/Std/subdir.mk
@@ -24,8 +22,6 @@ RM := rm -rf
 -include Libraries/iLLD/TC3xx/Tricore/Cpu/Irq/subdir.mk
 -include Libraries/iLLD/TC3xx/Tricore/Can/Std/subdir.mk
 -include Libraries/iLLD/TC3xx/Tricore/Can/Can/subdir.mk
--include Libraries/iLLD/TC3xx/Tricore/Asclin/Std/subdir.mk
--include Libraries/iLLD/TC3xx/Tricore/Asclin/Asc/subdir.mk
 -include Libraries/Infra/Ssw/TC3xx/Tricore/subdir.mk
 -include Libraries/Infra/Platform/Tricore/Compilers/subdir.mk
 -include Configurations/Debug/subdir.mk

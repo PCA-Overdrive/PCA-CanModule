@@ -35,8 +35,6 @@ Configurations \
 . \
 Libraries/Infra/Platform/Tricore/Compilers \
 Libraries/Infra/Ssw/TC3xx/Tricore \
-Libraries/iLLD/TC3xx/Tricore/Asclin/Asc \
-Libraries/iLLD/TC3xx/Tricore/Asclin/Std \
 Libraries/iLLD/TC3xx/Tricore/Can/Can \
 Libraries/iLLD/TC3xx/Tricore/Can/Std \
 Libraries/iLLD/TC3xx/Tricore/Cpu/Irq \
@@ -48,9 +46,7 @@ Libraries/iLLD/TC3xx/Tricore/Pms/Std \
 Libraries/iLLD/TC3xx/Tricore/Port/Std \
 Libraries/iLLD/TC3xx/Tricore/Scu/Std \
 Libraries/iLLD/TC3xx/Tricore/Src/Std \
-Libraries/iLLD/TC3xx/Tricore/Stm/Std \
 Libraries/iLLD/TC3xx/Tricore/_Impl \
-Libraries/iLLD/TC3xx/Tricore/_Lib/DataHandling \
 Libraries/iLLD/TC3xx/Tricore/_PinMap/TC37x \
 McmcanFd \
 
